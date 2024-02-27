@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = 5000;
 
-const url = 'mongodb://admin:password@localhost:27017';
+const url = 'mongodb://admin:password@mongodb';
 const dbName = 'user';
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -65,8 +65,14 @@ app.post('/edit-profile', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
 
-
+process.on('SIGINT', ()=>{
+   console.log("Received signal, closing server gracefully");
+   server.close(()=>{
+	console.log("Server closed. Exiting process");
+	process.exit(0);
+   });
+});
